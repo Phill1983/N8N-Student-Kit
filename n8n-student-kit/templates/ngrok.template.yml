@@ -1,0 +1,9 @@
+version: 3
+agent:
+  authtoken: YOUR_NGROK_AUTHTOKEN
+
+tunnels:
+  n8n:
+    proto: http
+    addr: 5678
+    domain: YOUR_RESERVED_NGROK_DOMAIN

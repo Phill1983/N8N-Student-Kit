@@ -1,0 +1,11 @@
+services:
+  n8n:
+    image: n8nio/n8n:${N8N_VERSION}
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    env_file:
+      - ../state/.env
+    volumes:
+      - ${N8N_DATA}:/home/node/.n8n

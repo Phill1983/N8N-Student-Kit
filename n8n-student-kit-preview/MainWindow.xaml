@@ -1,0 +1,663 @@
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="N8N Student Kit"
+    Width="820" Height="680"
+    WindowStartupLocation="CenterScreen"
+    ResizeMode="CanMinimize"
+    FontFamily="Segoe UI Variable, Segoe UI"
+    Background="#0B0E14"
+    WindowStyle="SingleBorderWindow">
+
+    <Window.Resources>
+
+        <Color x:Key="BgDeep">#0B0E14</Color>
+        <Color x:Key="Surface">#141925</Color>
+        <Color x:Key="SurfaceHi">#1C2233</Color>
+        <Color x:Key="BorderCol">#242B3D</Color>
+        <Color x:Key="TextPri">#E8ECF4</Color>
+        <Color x:Key="TextSec">#8B93A8</Color>
+        <Color x:Key="Accent">#7C6CFF</Color>
+        <Color x:Key="AccentSoft">#443A99</Color>
+        <Color x:Key="Ok">#10B981</Color>
+        <Color x:Key="Warn">#F59E0B</Color>
+        <Color x:Key="Bad">#EF4444</Color>
+        <Color x:Key="StepPendingBg">#1F2638</Color>
+
+        <SolidColorBrush x:Key="BgDeepBrush"       Color="{StaticResource BgDeep}"/>
+        <SolidColorBrush x:Key="SurfaceBrush"      Color="{StaticResource Surface}"/>
+        <SolidColorBrush x:Key="SurfaceHiBrush"    Color="{StaticResource SurfaceHi}"/>
+        <SolidColorBrush x:Key="BorderBrush"       Color="{StaticResource BorderCol}"/>
+        <SolidColorBrush x:Key="TextPriBrush"      Color="{StaticResource TextPri}"/>
+        <SolidColorBrush x:Key="TextSecBrush"      Color="{StaticResource TextSec}"/>
+        <SolidColorBrush x:Key="AccentBrush"       Color="{StaticResource Accent}"/>
+        <SolidColorBrush x:Key="AccentSoftBrush"   Color="{StaticResource AccentSoft}"/>
+        <SolidColorBrush x:Key="OkBrush"           Color="{StaticResource Ok}"/>
+        <SolidColorBrush x:Key="WarnBrush"         Color="{StaticResource Warn}"/>
+        <SolidColorBrush x:Key="BadBrush"          Color="{StaticResource Bad}"/>
+        <SolidColorBrush x:Key="StepPendingBrush"  Color="{StaticResource StepPendingBg}"/>
+
+        <LinearGradientBrush x:Key="HeaderBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#1B2236" Offset="0"/>
+            <GradientStop Color="#25204A" Offset="0.55"/>
+            <GradientStop Color="#3A1F56" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="AccentGlow" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#7C6CFF" Offset="0"/>
+            <GradientStop Color="#A78BFA" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="18" ShadowDepth="0" Opacity="0.3" Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="H2" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPriBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="Muted" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecBrush}"/>
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceHiBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPriBrush}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceHiBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPriBrush}"/>
+            <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="8"
+                                Background="{StaticResource AccentBrush}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.55" Color="#7C6CFF"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#8B7BFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#6A5BEA"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#3A3668"/>
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GhostBtn" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource TextPriBrush}"/>
+            <Setter Property="FontSize" Value="10.5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="7"
+                                Background="{StaticResource SurfaceHiBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="#1F273A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===== ScrollBar (slim, themed) ===== -->
+        <Style x:Key="ScrollBarThumb" TargetType="Thumb">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="Bd" Background="#2E3550" CornerRadius="4" Margin="2"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#4A4F77"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollBarPageButton" TargetType="RepeatButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Foreground" Value="#2E3550"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="10"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Border Background="#0E131F" CornerRadius="5">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageUpCommand"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageDownCommand"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Border Background="#0E131F" CornerRadius="5">
+                                    <Track x:Name="PART_Track">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageLeftCommand"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageRightCommand"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ScrollViewer">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Grid.Row="0" Grid.Column="0"
+                                                    CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                    Margin="{TemplateBinding Padding}"/>
+                            <ScrollBar Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                       Margin="2,4,4,4"/>
+                            <ScrollBar Name="PART_HorizontalScrollBar" Orientation="Horizontal"
+                                       Grid.Row="1" Grid.Column="0"
+                                       Value="{TemplateBinding HorizontalOffset}"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       ViewportSize="{TemplateBinding ViewportWidth}"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                       Margin="4,2,4,4"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="IconBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecBrush}"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1F273A"/>
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== HEADER ===== -->
+        <Border Grid.Row="0" Background="{StaticResource HeaderBrush}" Padding="22,12,22,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets"
+                                   FontSize="18" Foreground="#A78BFA"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBlock Text="N8N Student Kit" FontSize="17"
+                                   FontWeight="Bold" Foreground="#F4F6FB"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="for" VerticalAlignment="Center" FontSize="12"
+                                   Foreground="#C3C8D6" FontWeight="SemiBold"
+                                   Margin="12,0,8,0"/>
+                        <Grid Width="52" Height="22" VerticalAlignment="Center">
+                            <Path Fill="White"
+                                  Data="M 0,0 L 22,0 L 34,11 L 22,22 L 0,22 Z"/>
+                            <Rectangle Fill="White" Width="22" Height="22"
+                                       HorizontalAlignment="Right"/>
+                            <TextBlock Text="GO" Foreground="#1F2430" FontWeight="Bold"
+                                       FontSize="10" VerticalAlignment="Center"
+                                       HorizontalAlignment="Left" Margin="4,0,0,0"/>
+                            <TextBlock Text="IT" Foreground="#1F2430" FontWeight="Bold"
+                                       FontSize="10" VerticalAlignment="Center"
+                                       HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                        </Grid>
+                    </StackPanel>
+                    <TextBlock Text="Self-hosted stack — Docker, n8n, ngrok"
+                               Foreground="#9AA4BE" FontSize="10.5" Margin="0,3,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="1" CornerRadius="999"
+                        Background="#241B52" Padding="9,4"
+                        BorderBrush="#4C3FA8" BorderThickness="1"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="dotStackState" Width="7" Height="7" Fill="{StaticResource TextSecBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="lblStackState" Text="Idle"
+                                   Foreground="#E0DCFF" FontWeight="SemiBold"
+                                   FontSize="10.5" Margin="7,0,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ===== STEPPER ===== -->
+        <Border Grid.Row="1" Background="#0E131F" Padding="22,8,22,8"
+                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border x:Name="step1Dot" Width="22" Height="22" CornerRadius="999" Background="{StaticResource StepPendingBrush}"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <TextBlock x:Name="step1Icon" Text="1" Foreground="{StaticResource TextSecBrush}" FontWeight="SemiBold"
+                                   FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Configure" Foreground="{StaticResource TextPriBrush}" FontWeight="SemiBold" FontSize="11"/>
+                        <TextBlock x:Name="step1Sub" Text="fill fields" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border x:Name="step2Dot" Width="22" Height="22" CornerRadius="999" Background="{StaticResource StepPendingBrush}"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <TextBlock x:Name="step2Icon" Text="2" Foreground="{StaticResource TextSecBrush}" FontWeight="SemiBold"
+                                   FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Install" Foreground="{StaticResource TextPriBrush}" FontWeight="SemiBold" FontSize="11"/>
+                        <TextBlock x:Name="step2Sub" Text="pending" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border x:Name="step3Dot" Width="22" Height="22" CornerRadius="999" Background="{StaticResource StepPendingBrush}"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <TextBlock x:Name="step3Icon" Text="3" Foreground="{StaticResource TextSecBrush}" FontWeight="SemiBold"
+                                   FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Finalize" Foreground="{StaticResource TextPriBrush}" FontWeight="SemiBold" FontSize="11"/>
+                        <TextBlock x:Name="step3Sub" Text="pending" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Border x:Name="step4Dot" Width="22" Height="22" CornerRadius="999" Background="{StaticResource StepPendingBrush}"
+                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                        <TextBlock x:Name="step4Icon" Text="4" Foreground="{StaticResource TextSecBrush}" FontWeight="SemiBold"
+                                   FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Launch n8n" Foreground="{StaticResource TextPriBrush}" FontWeight="SemiBold" FontSize="11"/>
+                        <TextBlock x:Name="step4Sub" Text="pending" Style="{StaticResource Muted}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ===== BODY ===== -->
+        <ScrollViewer Grid.Row="2" x:Name="mainScroll" VerticalScrollBarVisibility="Auto" Padding="0"
+                      CanContentScroll="False">
+            <Grid Margin="16,12,16,16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- status pills -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource Card}" Padding="10,7" Margin="0,0,5,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="pillDockerDot" Width="8" Height="8" Fill="{StaticResource TextSecBrush}" VerticalAlignment="Center"/>
+                            <StackPanel Margin="8,0,0,0">
+                                <TextBlock Text="Docker" FontWeight="SemiBold" Foreground="{StaticResource TextPriBrush}" FontSize="11"/>
+                                <TextBlock x:Name="pillDockerText" Text="checking..." Style="{StaticResource Muted}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource Card}" Padding="10,7" Margin="3,0,3,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="pillNgrokDot" Width="8" Height="8" Fill="{StaticResource TextSecBrush}" VerticalAlignment="Center"/>
+                            <StackPanel Margin="8,0,0,0">
+                                <TextBlock Text="ngrok" FontWeight="SemiBold" Foreground="{StaticResource TextPriBrush}" FontSize="11"/>
+                                <TextBlock x:Name="pillNgrokText" Text="checking..." Style="{StaticResource Muted}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource Card}" Padding="10,7" Margin="5,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="pillImageDot" Width="8" Height="8" Fill="{StaticResource TextSecBrush}" VerticalAlignment="Center"/>
+                            <StackPanel Margin="8,0,0,0">
+                                <TextBlock Text="N8N image" FontWeight="SemiBold" Foreground="{StaticResource TextPriBrush}" FontSize="11"/>
+                                <TextBlock x:Name="pillImageText" Text="checking..." Style="{StaticResource Muted}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- configuration (collapsible) -->
+                <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentBrush}" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBlock Text="Configuration" Style="{StaticResource H2}" Margin="6,0,0,0"/>
+                            </StackPanel>
+                            <Button x:Name="btnCfgToggle" Grid.Column="2" Style="{StaticResource IconBtn}"
+                                    ToolTip="Collapse / expand">
+                                <TextBlock x:Name="cfgToggleIcon" Text="&#xE70E;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                            </Button>
+                        </Grid>
+                        <StackPanel x:Name="cfgContent">
+                            <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Text="n8n stores data on selected drive in  &lt;Drive&gt;:\n8n-data. Fill fields, then Save and Install."/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="32"/>
+                                    <RowDefinition Height="32"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Drive letter" Style="{StaticResource Label}"/>
+                                <TextBox   x:Name="txtDrive"  Grid.Row="0" Grid.Column="1" Width="80" HorizontalAlignment="Left"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="NGROK_DOMAIN" Style="{StaticResource Label}"/>
+                                <TextBox   x:Name="txtDomain" Grid.Row="1" Grid.Column="1"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="NGROK_AUTHTOKEN" Style="{StaticResource Label}"/>
+                                <PasswordBox x:Name="txtToken" Grid.Row="2" Grid.Column="1"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="BASIC_AUTH_USER" Style="{StaticResource Label}"/>
+                                <TextBox   x:Name="txtUser"   Grid.Row="3" Grid.Column="1"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="BASIC_AUTH_PASSWORD" Style="{StaticResource Label}"/>
+                                <PasswordBox x:Name="txtPass" Grid.Row="4" Grid.Column="1"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- actions -->
+                <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentBrush}" FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="Actions" Style="{StaticResource H2}" Margin="6,0,0,0"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="btnSave"       Grid.Column="0" Style="{StaticResource GhostBtn}"   Margin="0,0,3,0" Content="Save"/>
+                            <Button x:Name="btnInstall"    Grid.Column="1" Style="{StaticResource PrimaryBtn}" Margin="3,0,3,0" Content="Install (Admin)"/>
+                            <Button x:Name="btnStart"      Grid.Column="2" Style="{StaticResource PrimaryBtn}" Margin="3,0,3,0" Content="Start"/>
+                            <Button x:Name="btnStartNB"    Grid.Column="3" Style="{StaticResource GhostBtn}"   Margin="3,0,3,0" Content="Start (no browser)"/>
+                            <Button x:Name="btnStop"       Grid.Column="4" Style="{StaticResource GhostBtn}"   Margin="3,0,3,0" Content="Stop"/>
+                            <Button x:Name="btnCleanup"    Grid.Column="5" Style="{StaticResource GhostBtn}"   Margin="3,0,0,0" Content="Cleanup"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="btnOpenUrl"        Grid.Column="0" Style="{StaticResource GhostBtn}" Margin="0,0,3,0" Content="Open URL"/>
+                            <Button x:Name="btnRefresh"        Grid.Column="1" Style="{StaticResource GhostBtn}" Margin="3,0,3,0" Content="Refresh"/>
+                            <Button x:Name="btnDoctor"         Grid.Column="2" Style="{StaticResource GhostBtn}" Margin="3,0,3,0" Content="Doctor"/>
+                            <Button x:Name="btnOpenInstallLog" Grid.Column="3" Style="{StaticResource GhostBtn}" Margin="3,0,3,0" Content="Install log"/>
+                            <Button x:Name="btnCmd"            Grid.Column="4" Style="{StaticResource GhostBtn}" Margin="3,0,0,0" Content="CMD"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- log + progress -->
+                <Border Grid.Row="3" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                                <TextBlock Text="&#xE756;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource AccentBrush}" FontSize="14" VerticalAlignment="Center"/>
+                                <TextBlock Text="Activity" Style="{StaticResource H2}" Margin="6,0,0,0"/>
+                                <Ellipse x:Name="liveDot" Width="5" Height="5" Fill="#3A3E4E" VerticalAlignment="Center" Margin="8,0,0,1"/>
+                                <TextBlock x:Name="lblLiveState" Text="idle" Foreground="#6B7185" FontSize="10" VerticalAlignment="Center" Margin="4,0,0,1"/>
+                            </StackPanel>
+                            <TextBlock x:Name="lblFlow" Grid.Column="1"
+                                       Text="Ready: Save, then Install (Admin), then Start."
+                                       Style="{StaticResource Muted}"
+                                       TextAlignment="Right" VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </Grid>
+
+                        <Grid Height="4" Margin="0,0,0,8">
+                            <Border CornerRadius="2" Background="#232A3D"/>
+                            <Border x:Name="progressBar" Width="0" HorizontalAlignment="Left"
+                                    CornerRadius="2" Background="{StaticResource AccentGlow}"
+                                    Visibility="Collapsed">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.9" Color="#7C6CFF"/>
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+
+                        <Border CornerRadius="6" Background="#0A0D16" Padding="0"
+                                BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                Height="140">
+                            <TextBox x:Name="txtLog"
+                                     Background="Transparent"
+                                     Foreground="#BFC6D6"
+                                     FontFamily="Consolas, Cascadia Mono"
+                                     FontSize="10.5"
+                                     BorderThickness="0"
+                                     IsReadOnly="True"
+                                     TextWrapping="NoWrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     Padding="8"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

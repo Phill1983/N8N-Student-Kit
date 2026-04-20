@@ -1,0 +1,34 @@
+# --- secrets & runtime state (never commit!) ---
+n8n-student-kit/state/
+*.env
+*.env.*
+!*.env.example
+
+# --- bundled binaries (downloaded by installer, not tracked) ---
+n8n-student-kit/tools/*.exe
+n8n-student-kit/tools/images/
+
+# --- logs ---
+*.log
+
+# --- OS / editor noise ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+
+# --- misc ---
+node_modules/
+dist/
+build/
+*.tmp
+*.bak
