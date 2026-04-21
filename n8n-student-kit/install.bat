@@ -908,11 +908,12 @@ if "%N8N_BASIC_AUTH_PASSWORD%"=="" (
 
 :after_load
 
-
-
-
-
-
+echo [1b/10] Перевірка локальних тулів (Docker installer, ngrok)...
+call :ensure_tools
+if errorlevel 1 (
+    call :maybe_pause
+    exit /b 1
+)
 
 echo [2/10] Перевірка WSL...
 
@@ -2281,6 +2282,106 @@ exit /b 0
 
 
 
+REM =========================================================================
+REM   :ensure_tools  - download Docker installer + ngrok if missing
+REM =========================================================================
+:ensure_tools
+if not exist "%TOOLS_DIR%" mkdir "%TOOLS_DIR%"
+
+REM --- Docker Desktop Installer --------------------------------------------
+set "DOCKER_FOUND="
+if exist "%TOOLS_DIR%\DockerDesktopInstaller.exe"    set "DOCKER_FOUND=%TOOLS_DIR%\DockerDesktopInstaller.exe"
+if exist "%TOOLS_DIR%\Docker Desktop Installer.exe"  set "DOCKER_FOUND=%TOOLS_DIR%\Docker Desktop Installer.exe"
+docker --version >nul 2>&1
+if not errorlevel 1 set "DOCKER_FOUND=already-installed"
+
+if not defined DOCKER_FOUND (
+    echo [INFO] Docker Desktop Installer не знайдено в tools\.
+    set "DL_DOCKER=Y"
+    if not "%AUTO_REUSE%"=="1" if not "%SKIP_PAUSE%"=="1" (
+        set /p DL_DOCKER=Скачати його з docker.com ^(~600 MB^)? Y/N [Y]: 
+        if "!DL_DOCKER!"=="" set "DL_DOCKER=Y"
+    )
+    if /I "!DL_DOCKER!"=="Y" (
+        set "DOCKER_URL=https://desktop.docker.com/win/main/amd64/Docker Desktop Installer.exe"
+        set "DOCKER_OUT=%TOOLS_DIR%\Docker Desktop Installer.exe"
+        echo [INFO] Завантажую Docker Desktop Installer...
+        echo [INFO] URL: !DOCKER_URL!
+        call :download_file "!DOCKER_URL!" "!DOCKER_OUT!"
+        if errorlevel 1 (
+            echo [ERROR] Не вдалося завантажити Docker installer.
+            echo         Перевір інтернет-зʼєднання або завантаж вручну:
+            echo         https://www.docker.com/products/docker-desktop/
+            echo         і поклади файл у: %TOOLS_DIR%
+            exit /b 1
+        )
+        set "DOCKER_INSTALLER=!DOCKER_OUT!"
+        echo [OK] Docker installer готовий.
+    ) else (
+        echo [ERROR] Потрібен Docker Desktop Installer.exe у %TOOLS_DIR%\
+        exit /b 1
+    )
+)
+
+REM --- ngrok ---------------------------------------------------------------
+set "NGROK_FOUND="
+if exist "%NGROK_EXE%" set "NGROK_FOUND=%NGROK_EXE%"
+if not defined NGROK_FOUND (
+    for /f "delims=" %%I in ('where ngrok.exe 2^>nul') do (
+        set "NGROK_FOUND=%%~fI"
+        goto :ngrok_found_in_path
+    )
+)
+:ngrok_found_in_path
+
+if not defined NGROK_FOUND (
+    echo [INFO] ngrok.exe не знайдено ані в tools\, ані в PATH.
+    set "DL_NGROK=Y"
+    if not "%AUTO_REUSE%"=="1" if not "%SKIP_PAUSE%"=="1" (
+        set /p DL_NGROK=Скачати ngrok v3 ^(~15 MB^)? Y/N [Y]: 
+        if "!DL_NGROK!"=="" set "DL_NGROK=Y"
+    )
+    if /I not "!DL_NGROK!"=="Y" (
+        echo [ERROR] Потрібен ngrok.exe у %TOOLS_DIR%\ або в PATH.
+        echo         Завантаж вручну: https://ngrok.com/download
+        exit /b 1
+    )
+    set "NGROK_URL=https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip"
+    set "NGROK_ZIP=%TOOLS_DIR%\ngrok.zip"
+    echo [INFO] Завантажую ngrok...
+    call :download_file "!NGROK_URL!" "!NGROK_ZIP!"
+    if errorlevel 1 (
+        echo [ERROR] Не вдалося завантажити ngrok.
+        exit /b 1
+    )
+    echo [INFO] Розпаковую ngrok...
+    powershell -NoProfile -Command "Expand-Archive -Force -LiteralPath '!NGROK_ZIP!' -DestinationPath '%TOOLS_DIR%'"
+    del /f /q "!NGROK_ZIP!" >nul 2>&1
+    if not exist "%TOOLS_DIR%\ngrok.exe" (
+        echo [ERROR] Після розпакування ngrok.exe не знайдено.
+        exit /b 1
+    )
+    set "NGROK_EXE=%TOOLS_DIR%\ngrok.exe"
+    echo [OK] ngrok готовий.
+)
+exit /b 0
+
+
+REM =========================================================================
+REM   :download_file %1=URL  %2=output-path
+REM   tries curl first, falls back to PowerShell Invoke-WebRequest
+REM =========================================================================
+:download_file
+set "DL_URL=%~1"
+set "DL_OUT=%~2"
+where curl.exe >nul 2>&1
+if not errorlevel 1 (
+    curl.exe -L --fail --retry 3 --connect-timeout 20 --progress-bar -o "%DL_OUT%" "%DL_URL%"
+    if not errorlevel 1 exit /b 0
+    echo [WARN] curl failed, trying PowerShell...
+)
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri '%DL_URL%' -OutFile '%DL_OUT%' -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
+exit /b %ERRORLEVEL%
 
 
 
