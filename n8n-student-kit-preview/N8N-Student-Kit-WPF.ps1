@@ -326,6 +326,9 @@ $script:tailLineCount      = 0
 $script:lastFileLineCount  = -1
 $script:stableLogTicks     = 0
 $script:installNextNotified = $false
+$script:wingetStart         = $null
+$script:autoContinueTimer   = $null
+$script:autoContinueSeconds = 0
 
 function Show-Progress {
     $progressBar.Visibility = [System.Windows.Visibility]::Visible
@@ -405,8 +408,10 @@ $timer.Add_Tick({
     }
     if ($all.Count -eq $script:lastFileLineCount) {
         $script:stableLogTicks++
-        if ($script:stableLogTicks -ge 4) {
+        if ($script:stableLogTicks -ge 4 -and -not $script:wingetStart) {
             Hide-Progress
+        } elseif ($script:wingetStart) {
+            Show-Progress
         }
     } else {
         $script:lastFileLineCount = $all.Count
@@ -418,27 +423,47 @@ $timer.Add_Tick({
     if ($lastLine -and $lastLine.Length -gt 120) { $lastLine = $lastLine.Substring(0, 117) + "..." }
 
     $hasNext = $false
-    foreach ($ln in $all) { if ($ln -match '\[NEXT\]') { $hasNext = $true; break } }
+    $hasWingetStart = $false
+    $hasWingetDone  = $false
+    foreach ($ln in $all) {
+        if ($ln -match '\[NEXT\]') { $hasNext = $true }
+        if ($ln -match 'Installing Docker Desktop via winget') { $hasWingetStart = $true }
+        if ($ln -match 'Docker Desktop installed via winget|ACTION REQUIRED\] Docker Desktop installed') { $hasWingetDone = $true }
+    }
+
+    if ($hasWingetStart -and -not $hasWingetDone) {
+        if (-not $script:wingetStart) { $script:wingetStart = Get-Date }
+    } elseif ($hasWingetDone -and $script:wingetStart) {
+        $script:wingetStart = $null
+    }
 
     if ($hasNext -and ($script:tailPath -match 'gui-install\.log$')) {
-        $lblFlow.Text = "Docker installed. Click Install (Admin) again to finish setup."
         Set-Step $step2Dot $step2Icon $step2Sub 2 'done' "docker installed"
-        Set-Step $step3Dot $step3Icon $step3Sub 3 'active' "click Install again"
+        Set-Step $step3Dot $step3Icon $step3Sub 3 'active' "auto-continuing"
         if (-not $script:installNextNotified) {
             $script:installNextNotified = $true
-            $timer.Stop()
-            Hide-Progress
-            $msg = "Docker Desktop was installed successfully.`r`n`r`n" +
-                   "The installer finished its first pass and needs a second run to complete the rest:`r`n" +
-                   "  - ngrok setup`r`n" +
-                   "  - .env generation`r`n" +
-                   "  - n8n container`r`n`r`n" +
-                   "Click [Install (Admin)] once more to continue. Do NOT press Start yet."
-            [void][System.Windows.MessageBox]::Show($window, $msg, "Docker installed - one more step",
-                [System.Windows.MessageBoxButton]::OK,
-                [System.Windows.MessageBoxImage]::Information)
-            $timer.Start()
+            $script:autoContinueSeconds = 5
+            $lblFlow.Text = "Docker installed. Auto-continuing install in 5s..."
+            Add-Log "Docker Desktop installed. Auto-continuing install in 5 seconds (no reboot needed)."
+            if (-not $script:autoContinueTimer) {
+                $script:autoContinueTimer = New-Object System.Windows.Threading.DispatcherTimer
+                $script:autoContinueTimer.Interval = [TimeSpan]::FromSeconds(1)
+                $script:autoContinueTimer.Add_Tick({
+                    $script:autoContinueSeconds--
+                    if ($script:autoContinueSeconds -le 0) {
+                        $script:autoContinueTimer.Stop()
+                        Add-Log "Auto-continue: launching Install (Admin) second pass..."
+                        try { Start-InstallAdmin } catch { Add-Log ("Auto-continue failed: " + $_.Exception.Message) }
+                    } else {
+                        $lblFlow.Text = ("Docker installed. Auto-continuing install in {0}s..." -f $script:autoContinueSeconds)
+                    }
+                })
+            }
+            $script:autoContinueTimer.Start()
         }
+    } elseif ($script:wingetStart) {
+        $elapsed = (Get-Date) - $script:wingetStart
+        $lblFlow.Text = ("Installing Docker Desktop (silent, ~3-5 min) - elapsed {0:mm\:ss} | {1}" -f $elapsed, $lastLine)
     } else {
         $lblFlow.Text = ("Log: {0} lines | {1}" -f $all.Count, $lastLine)
     }
@@ -472,10 +497,11 @@ $btnSave.Add_Click({
     Set-Step $step2Dot $step2Icon $step2Sub 2 'active' "ready to install"
 })
 
-$btnInstall.Add_Click({
+function Start-InstallAdmin {
     Save-Config $txtDrive.Text $txtDomain.Text.Trim() $txtToken.Password.Trim() $txtUser.Text.Trim() $txtPass.Password.Trim()
     $log = Join-Path $stateDir "gui-install.log"
     $script:installNextNotified = $false
+    $script:wingetStart          = $null
     Add-Log "Starting install (admin)..."
     Add-Log "1) If UAC appears - click Yes."
     Add-Log "2) Live file: $log"
@@ -486,7 +512,9 @@ $btnInstall.Add_Click({
     Set-HeaderState "Installing" $brAcc
     $cmdLine = ('"{0}" install' -f $guiRunCmd)
     Start-CommandWithLog $cmdLine $true $log
-})
+}
+
+$btnInstall.Add_Click({ Start-InstallAdmin })
 
 $btnOpenInstallLog.Add_Click({
     $p = Join-Path $stateDir "gui-install.log"

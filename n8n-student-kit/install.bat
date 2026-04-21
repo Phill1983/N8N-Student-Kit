@@ -2309,14 +2309,18 @@ if not defined DOCKER_FOUND (
     where winget >nul 2>&1
     if not errorlevel 1 (
         echo [INFO] Installing Docker Desktop via winget ^(official Microsoft channel^)...
-        echo [INFO] About 600 MB, will take a few minutes. Progress appears below.
+        echo [INFO] This downloads ~600 MB and silently runs the Docker installer.
+        echo [INFO] You will see a spinner ^(- \ ^| /^) - that's winget waiting for the installer.
+        echo [INFO] Typical time: 3-5 minutes on a decent connection. Do NOT close this window.
+        echo [INFO] Start: %TIME%
         winget install --id Docker.DockerDesktop -e --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
         if not errorlevel 1 (
-            echo [OK] Docker Desktop installed via winget.
             echo.
+            echo [INFO] Finish: %TIME%
+            echo [OK] Docker Desktop installed via winget.
             echo [ACTION REQUIRED] Docker Desktop installed.
-            echo If Windows asks for a reboot - reboot and run Install again.
-            echo [NEXT] After restarting Install [Admin] - ngrok, .env and n8n will follow.
+            echo [NEXT] GUI will automatically relaunch Install in a few seconds - no reboot needed on modern Windows.
+            echo [INFO] If Windows does prompt for a reboot, reboot first and then click Install [Admin] again.
             exit /b 2
         )
         echo [WARN] winget could not install Docker. Trying direct download...

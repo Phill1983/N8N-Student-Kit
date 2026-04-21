@@ -926,7 +926,7 @@ if errorlevel 1 (
 
 
 
-    if !NGROK_RETRIES! GEQ 20 (
+    if !NGROK_RETRIES! GEQ 40 (
 
 
 
@@ -934,7 +934,7 @@ if errorlevel 1 (
 
 
 
-        echo [WARN] ngrok API on 127.0.0.1:4040 did not respond within 60 seconds.
+        echo [INFO] ngrok API on 127.0.0.1:4040 did not respond within 120 seconds - this is common on free-tier cold start.
 
 
 
@@ -958,7 +958,7 @@ if errorlevel 1 (
 
 
 
-    call :progressbar "ngrok API" !NGROK_RETRIES! 20 quiet
+    call :progressbar "ngrok API" !NGROK_RETRIES! 40 quiet
 
 
 
