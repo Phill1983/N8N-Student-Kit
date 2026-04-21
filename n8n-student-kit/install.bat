@@ -1263,7 +1263,7 @@ if errorlevel 1 (
 
 
 
-    echo [NEXT] Після цього знову запусти Install ^(Admin^) або install.bat --auto-reuse - тоді підуть ngrok, .env і n8n. Кнопку Start натискай лише коли вже є state\.env ^(після повного install^).
+    echo [NEXT] Після цього знову запусти Install [Admin] або install.bat --auto-reuse - тоді підуть ngrok, .env і n8n. Кнопку Start натискай лише коли вже є state\.env [після повного install].
 
 
 
@@ -2303,7 +2303,7 @@ if not defined DOCKER_FOUND (
         if "!DL_DOCKER!"=="" set "DL_DOCKER=Y"
     )
     if /I "!DL_DOCKER!"=="Y" (
-        set "DOCKER_URL=https://desktop.docker.com/win/main/amd64/Docker Desktop Installer.exe"
+        set "DOCKER_URL=https://desktop.docker.com/win/main/amd64/Docker%%20Desktop%%20Installer.exe"
         set "DOCKER_OUT=%TOOLS_DIR%\Docker Desktop Installer.exe"
         echo [INFO] Завантажую Docker Desktop Installer...
         echo [INFO] URL: !DOCKER_URL!
@@ -2380,7 +2380,7 @@ if not errorlevel 1 (
     if not errorlevel 1 exit /b 0
     echo [WARN] curl failed, trying PowerShell...
 )
-powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri '%DL_URL%' -OutFile '%DL_OUT%' -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri $env:DL_URL -OutFile $env:DL_OUT -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
 exit /b %ERRORLEVEL%
 
 
