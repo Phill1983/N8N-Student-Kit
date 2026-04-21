@@ -122,7 +122,7 @@ if not exist "%CONFIG_FILE%" (
 
 
 
-    echo [ERROR] Конфіг не знайдено. Спочатку запусти install.bat
+    echo [ERROR] Config not found. Run install.bat first.
 
 
 
@@ -202,7 +202,7 @@ if not exist "%ENV_FILE%" (
 
 
 
-    echo [ERROR] Файл state\.env не знайдено. Запусти install.bat
+    echo [ERROR] File state\.env not found. Run install.bat.
 
 
 
@@ -278,7 +278,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-    echo [ERROR] Не знайдено tools\ngrok.exe
+    echo [ERROR] tools\ngrok.exe not found.
 
 
 
@@ -286,7 +286,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-    echo Додай офіційний ngrok.exe у папку tools або встанови ngrok у PATH.
+    echo Put the official ngrok.exe into the tools folder or install ngrok into PATH.
 
 
 
@@ -318,7 +318,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-echo [INFO] Використовую ngrok: "%NGROK_EXE%"
+echo [INFO] Using ngrok: "%NGROK_EXE%"
 
 
 
@@ -374,7 +374,7 @@ echo.
 
 
 
-echo [1/5] Запуск Docker Desktop...
+echo [1/5] Starting Docker Desktop...
 
 
 
@@ -422,7 +422,7 @@ if errorlevel 1 (
 
 
 
-echo [2/5] Очікування Docker (до 5 хвилин)...
+echo [2/5] Waiting for Docker (up to 5 minutes)...
 
 
 
@@ -470,7 +470,7 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Docker daemon ще недоступний. Повторно запускаю Docker Desktop...
+        echo [INFO] Docker daemon still unavailable. Restarting Docker Desktop...
 
 
 
@@ -486,7 +486,7 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Повторна спроба запуску Docker Desktop...
+        echo [INFO] Retrying Docker Desktop launch...
 
 
 
@@ -510,7 +510,7 @@ if errorlevel 1 (
 
 
 
-        echo [ERROR] Docker не запустився за 5 хвилин.
+        echo [ERROR] Docker did not start within 5 minutes.
 
 
 
@@ -518,7 +518,7 @@ if errorlevel 1 (
 
 
 
-        echo Відкрий Docker Desktop вручну, дочекайся статусу Running і повтори start.bat.
+        echo Open Docker Desktop manually, wait for Running status and re-run start.bat.
 
 
 
@@ -574,7 +574,7 @@ if errorlevel 1 (
 
 
 
-echo [OK] Docker daemon доступний.
+echo [OK] Docker daemon available.
 
 
 
@@ -590,7 +590,7 @@ echo [OK] Docker daemon доступний.
 
 
 
-echo [3/6] Запуск n8n через docker compose...
+echo [3/6] Starting n8n via docker compose...
 
 
 
@@ -618,7 +618,7 @@ if defined EXISTING_N8N_STATUS (
 
 
 
-        echo [INFO] Контейнер "n8n" вже запущений. Пропускаю docker compose up.
+        echo [INFO] Container "n8n" already running. Skipping docker compose up.
 
 
 
@@ -630,7 +630,7 @@ if defined EXISTING_N8N_STATUS (
 
 
 
-        echo [INFO] Знайдено зупинений контейнер "n8n". Видаляю, щоб уникнути конфлікту...
+        echo [INFO] Found stopped container "n8n". Removing it to avoid conflict...
 
 
 
@@ -678,7 +678,7 @@ if "%SKIP_COMPOSE%"=="0" (
 
 
 
-        echo [ERROR] Не вдалося підняти n8n
+        echo [ERROR] Failed to bring up n8n.
 
 
 
@@ -730,7 +730,7 @@ if "%SKIP_COMPOSE%"=="0" (
 
 
 
-echo [4/6] Очікування локального n8n (до 2 хвилин)...
+echo [4/6] Waiting for local n8n (up to 2 minutes)...
 
 
 
@@ -758,11 +758,11 @@ if errorlevel 1 (
 
 
 
-        echo [ERROR] n8n не відповів на http://127.0.0.1:5678 за 2 хвилини.
+        echo [ERROR] n8n did not respond on http://127.0.0.1:5678 within 2 minutes.
 
 
 
-        echo Перевір docker logs n8n і повтори start.bat.
+        echo Check docker logs n8n and re-run start.bat.
 
 
 
@@ -794,7 +794,7 @@ if errorlevel 1 (
 
 
 
-echo [OK] n8n відповідає локально.
+echo [OK] n8n responds locally.
 
 
 
@@ -802,7 +802,7 @@ echo [OK] n8n відповідає локально.
 
 
 
-echo [5/6] Зупинка старого ngrok...
+echo [5/6] Stopping previous ngrok...
 
 
 
@@ -826,7 +826,7 @@ taskkill /F /FI "WINDOWTITLE eq n8n-kit-ngrok*" >nul 2>&1
 
 
 
-echo [6/6] Запуск ngrok...
+echo [6/6] Starting ngrok...
 
 
 
@@ -854,11 +854,11 @@ if errorlevel 1 (
 
 
 
-    echo [ERROR] ngrok процес не запустився.
+    echo [ERROR] ngrok process did not start.
 
 
 
-    echo Перевір токен/domain або запусти вручну: "%NGROK_EXE%" http 5678 --url=%NGROK_DOMAIN%
+    echo Check the token/domain or run manually: "%NGROK_EXE%" http 5678 --url=%NGROK_DOMAIN%
 
 
 
@@ -934,11 +934,11 @@ if errorlevel 1 (
 
 
 
-        echo [WARN] ngrok API на 127.0.0.1:4040 не відповів за 60 секунд.
+        echo [WARN] ngrok API on 127.0.0.1:4040 did not respond within 60 seconds.
 
 
 
-        echo [WARN] Продовжую запуск n8n. Якщо публічний URL не відкриється - перевір ngrok вручну.
+        echo [WARN] Continuing n8n launch. If the public URL does not open - check ngrok manually.
 
 
 
@@ -986,7 +986,7 @@ if errorlevel 1 (
 
 
 
-echo [INFO] ngrok tunnel активний.
+echo [INFO] ngrok tunnel active.
 
 
 
@@ -1042,7 +1042,7 @@ if "%OPEN_BROWSER%"=="1" (
 
 
 
-    echo [INFO] --no-browser: автоматичне відкриття браузера пропущено.
+    echo [INFO] --no-browser: auto-opening the browser skipped.
 
 
 
@@ -1153,7 +1153,7 @@ exit /b 0
 
 if "%SKIP_PAUSE%"=="1" (
 
-  echo [INFO] GUI: без натискання клавіші.
+  echo [INFO] GUI: no keypress required.
 
   timeout /t 1 /nobreak >nul
 

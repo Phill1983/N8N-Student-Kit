@@ -190,11 +190,11 @@ if errorlevel 1 (
 
 
 
-        echo [ERROR] Права адміністратора не отримано ^(UAC скасовано або заблоковано політикою^).
+        echo [ERROR] Administrator rights were not granted ^(UAC cancelled or blocked by policy^).
 
 
 
-        echo Відкрий CMD як адміністратор і запусти:
+        echo Open CMD as administrator and run:
 
 
 
@@ -218,7 +218,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Потрібні права адміністратора. Запитую UAC...
+    echo [INFO] Administrator rights required. Requesting UAC...
 
 
 
@@ -230,7 +230,7 @@ if errorlevel 1 (
 
 
 
-        echo [WARN] PowerShell RunAs не спрацював. Пробую fallback...
+        echo [WARN] PowerShell RunAs failed. Trying fallback...
 
 
 
@@ -242,7 +242,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Якщо нове адмін-вікно не відкрилось, відкрий CMD як адміністратор і запусти:
+    echo [INFO] If a new admin window did not open, open CMD as administrator and run:
 
 
 
@@ -250,7 +250,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Лог запуску: "%LOG_FILE%"
+    echo [INFO] Launch log: "%LOG_FILE%"
 
 
 
@@ -326,7 +326,7 @@ if errorlevel 1 (
 
 
 
-    echo [WARN] Не вдалося перевірити права через net session. Продовжую...
+    echo [WARN] Could not verify rights via net session. Continuing...
 
 
 
@@ -354,7 +354,7 @@ if exist "%CONFIG_FILE%" (
 
 
 
-    echo [1/10] Знайдено існуючу конфігурацію.
+    echo [1/10] Existing configuration found.
 
 
 
@@ -362,7 +362,7 @@ if exist "%CONFIG_FILE%" (
 
 
 
-        echo [INFO] --auto-reuse активний. Використовую існуючу конфігурацію.
+        echo [INFO] --auto-reuse active. Using existing configuration.
 
 
 
@@ -378,7 +378,7 @@ if exist "%CONFIG_FILE%" (
 
 
 
-    set /p REUSE_CONFIG=Використати її? ^(Y/N, за замовчуванням Y^): 
+    set /p REUSE_CONFIG=Reuse it? ^(Y/N, default Y^): 
 
 
 
@@ -434,7 +434,7 @@ if exist "%CONFIG_FILE%" (
 
 
 
-echo [1/10] Введення параметрів...
+echo [1/10] Entering parameters...
 
 
 
@@ -442,7 +442,7 @@ echo [1/10] Введення параметрів...
 
 
 
-set /p INSTALL_DRIVE=На який диск зберігати дані n8n? (наприклад C або D): 
+set /p INSTALL_DRIVE=Which drive to store n8n data on (e.g. C or D): 
 
 
 
@@ -490,7 +490,7 @@ if not exist "%N8N_DATA%" mkdir "%N8N_DATA%"
 
 
 
-set /p NGROK_DOMAIN=Введи ваш постійний ngrok domain: 
+set /p NGROK_DOMAIN=Enter your permanent ngrok domain: 
 
 
 
@@ -506,7 +506,7 @@ if "%NGROK_DOMAIN%"=="" (
 
 
 
-    echo [ERROR] NGROK_DOMAIN не може бути пустим.
+    echo [ERROR] NGROK_DOMAIN cannot be empty.
 
 
 
@@ -546,7 +546,7 @@ if "%NGROK_DOMAIN%"=="" (
 
 
 
-set /p NGROK_AUTHTOKEN=Введи ngrok authtoken: 
+set /p NGROK_AUTHTOKEN=Enter ngrok authtoken: 
 
 
 
@@ -562,7 +562,7 @@ if "%NGROK_AUTHTOKEN%"=="" (
 
 
 
-    echo [ERROR] NGROK_AUTHTOKEN не може бути пустим.
+    echo [ERROR] NGROK_AUTHTOKEN cannot be empty.
 
 
 
@@ -602,7 +602,7 @@ if "%NGROK_AUTHTOKEN%"=="" (
 
 
 
-set /p N8N_BASIC_AUTH_USER=Введи логін для n8n basic auth: 
+set /p N8N_BASIC_AUTH_USER=Enter login for n8n basic auth: 
 
 
 
@@ -618,7 +618,7 @@ if "%N8N_BASIC_AUTH_USER%"=="" (
 
 
 
-    echo [ERROR] Логін не може бути пустим.
+    echo [ERROR] Login cannot be empty.
 
 
 
@@ -658,7 +658,7 @@ if "%N8N_BASIC_AUTH_USER%"=="" (
 
 
 
-set /p N8N_BASIC_AUTH_PASSWORD=Введи пароль для n8n basic auth: 
+set /p N8N_BASIC_AUTH_PASSWORD=Enter password for n8n basic auth: 
 
 
 
@@ -674,7 +674,7 @@ if "%N8N_BASIC_AUTH_PASSWORD%"=="" (
 
 
 
-    echo [ERROR] Пароль не може бути пустим.
+    echo [ERROR] Password cannot be empty.
 
 
 
@@ -810,7 +810,7 @@ goto after_load
 
 
 
-echo [1/10] Завантажую існуючу конфігурацію...
+echo [1/10] Loading existing configuration...
 
 
 
@@ -858,7 +858,7 @@ if "%N8N_BASIC_AUTH_USER%"=="" (
 
 
 
-    set /p N8N_BASIC_AUTH_USER=Введи логін для n8n basic auth: 
+    set /p N8N_BASIC_AUTH_USER=Enter login for n8n basic auth: 
 
 
 
@@ -882,7 +882,7 @@ if "%N8N_BASIC_AUTH_PASSWORD%"=="" (
 
 
 
-    set /p N8N_BASIC_AUTH_PASSWORD=Введи пароль для n8n basic auth: 
+    set /p N8N_BASIC_AUTH_PASSWORD=Enter password for n8n basic auth: 
 
 
 
@@ -908,7 +908,7 @@ if "%N8N_BASIC_AUTH_PASSWORD%"=="" (
 
 :after_load
 
-echo [1b/10] Перевірка локальних тулів (Docker installer, ngrok)...
+echo [1b/10] Checking local tools (Docker installer, ngrok)...
 call :ensure_tools
 set "ET_RC=%ERRORLEVEL%"
 if "%ET_RC%"=="2" (
@@ -920,7 +920,7 @@ if "%ET_RC%"=="1" (
     exit /b 1
 )
 
-echo [2/10] Перевірка WSL...
+echo [2/10] Checking WSL...
 
 
 
@@ -944,7 +944,7 @@ if errorlevel 1 (
 
 
 
-    echo [WARN] WSL не знайдено або недоступний.
+    echo [WARN] WSL not found or unavailable.
 
 
 
@@ -952,7 +952,7 @@ if errorlevel 1 (
 
 
 
-    echo Спробую увімкнути необхідні компоненти Windows...
+    echo Trying to enable the required Windows features...
 
 
 
@@ -984,7 +984,7 @@ if errorlevel 1 (
 
 
 
-    echo [ACTION REQUIRED] Потрібне перезавантаження Windows.
+    echo [ACTION REQUIRED] Windows reboot required.
 
 
 
@@ -1024,7 +1024,7 @@ if errorlevel 1 (
 
 
 
-echo [3/10] Перевірка Docker Desktop...
+echo [3/10] Checking Docker Desktop...
 
 
 
@@ -1048,19 +1048,19 @@ if not errorlevel 1 (
 
 
 
-    echo [INFO] Docker CLI вже є в PATH — інсталятор з tools\ не запускаю.
+    echo [INFO] Docker CLI already in PATH - not running the installer from tools\.
 
 
 
 
 
-    echo [INFO] У диспетчері шукай Docker Desktop.exe або com.docker.backend, не Docker Desktop Installer.exe.
+    echo [INFO] In Task Manager look for Docker Desktop.exe or com.docker.backend, not Docker Desktop Installer.exe.
 
 
 
 
 
-    echo [INFO] Останній рядок — норма: інсталятор з папки tools потрібен лише якщо docker ще не встановлений.
+    echo [INFO] The last line is normal: the installer from tools/ is only needed if docker is not yet installed.
 
 
 
@@ -1090,7 +1090,7 @@ if errorlevel 1 (
 
 
 
-        echo [ERROR] Не знайдено Docker installer у папці tools.
+        echo [ERROR] Docker installer not found in the tools folder.
 
 
 
@@ -1098,7 +1098,7 @@ if errorlevel 1 (
 
 
 
-        echo Підтримувані назви: DockerDesktopInstaller.exe або Docker Desktop Installer.exe
+        echo Supported names: DockerDesktopInstaller.exe or Docker Desktop Installer.exe
 
 
 
@@ -1138,7 +1138,7 @@ if errorlevel 1 (
 
 
 
-    echo Встановлюю Docker Desktop...
+    echo Installing Docker Desktop...
 
 
 
@@ -1146,7 +1146,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Запуск: "%DOCKER_INSTALLER%" install --quiet --accept-license
+    echo [INFO] Running: "%DOCKER_INSTALLER%" install --quiet --accept-license
 
 
 
@@ -1154,7 +1154,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Без --accept-license тиха інсталяція часто "висне" на умовах ліцензії.
+    echo [INFO] Without --accept-license the silent install often hangs on the license screen.
 
 
 
@@ -1162,7 +1162,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Тиха інсталяція зазвичай 2-5 хв; консоль при цьому не оновлюється - це нормально.
+    echo [INFO] Silent install usually takes 2-5 min; the console will not update during that - this is normal.
 
 
 
@@ -1170,7 +1170,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Процеси Docker до запуску інсталятора ^(якщо порожньо — ще не стартував^):
+    echo [INFO] Docker processes before the installer starts ^(empty means not started yet^):
 
 
 
@@ -1186,7 +1186,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Запускаю: має з’явитись Docker Desktop Installer.exe ^(інколи лише на 1–2 хв^).
+    echo [INFO] Launching: Docker Desktop Installer.exe should appear ^(sometimes only for 1-2 min^).
 
 
 
@@ -1194,7 +1194,7 @@ if errorlevel 1 (
 
 
 
-    echo [WAIT] Далі пауза без нових рядків - нормально. Наступний рядок у лозі тільки після виходу інсталятора ^(зазвичай кілька хвилин^).
+    echo [WAIT] A pause with no new lines is normal. The next log line appears only after the installer exits ^(usually a few minutes^).
 
 
 
@@ -1210,7 +1210,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Інсталятор завершився, код: !ERRORLEVEL!
+    echo [INFO] Installer finished, code: !ERRORLEVEL!
 
 
 
@@ -1218,7 +1218,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Процеси Docker після інсталятора:
+    echo [INFO] Docker processes after the installer:
 
 
 
@@ -1256,7 +1256,7 @@ if errorlevel 1 (
 
 
 
-    echo [ACTION REQUIRED] Docker Desktop встановлено.
+    echo [ACTION REQUIRED] Docker Desktop installed.
 
 
 
@@ -1264,11 +1264,11 @@ if errorlevel 1 (
 
 
 
-    echo Якщо система попросить перезавантаження - перезавантаж ПК і знову запусти install.bat
+    echo If the system asks for a reboot - reboot the PC and run install.bat again.
 
 
 
-    echo [NEXT] Після цього знову запусти Install [Admin] або install.bat --auto-reuse - тоді підуть ngrok, .env і n8n. Кнопку Start натискай лише коли вже є state\.env [після повного install].
+    echo [NEXT] Then run Install [Admin] or install.bat --auto-reuse again - ngrok, .env and n8n will follow. Click Start only once state\.env exists [after full install].
 
 
 
@@ -1305,7 +1305,7 @@ for /f "tokens=1,* delims=:" %%A in ('docker --version 2^>nul') do set "DOCKER_V
 
 
 
-if defined DOCKER_VERSION_LINE echo [INFO] Знайдено Docker CLI: !DOCKER_VERSION_LINE!
+if defined DOCKER_VERSION_LINE echo [INFO] Found Docker CLI: !DOCKER_VERSION_LINE!
 
 
 
@@ -1321,11 +1321,11 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Docker daemon поки не доступний. Це нормально після встановлення.
+    echo [INFO] Docker daemon is not yet available. This is normal after installation.
 
 
 
-    echo [INFO] Спробую запустити Docker Desktop і дочекатися ready стану.
+    echo [INFO] Will try to start Docker Desktop and wait until it is ready.
 
 
 
@@ -1333,7 +1333,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Docker daemon уже доступний.
+    echo [INFO] Docker daemon is already available.
 
 
 
@@ -1353,7 +1353,7 @@ if errorlevel 1 (
 
 
 
-echo [4/10] Перевірка ngrok...
+echo [4/10] Checking ngrok...
 
 
 
@@ -1393,7 +1393,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-    echo [ERROR] Не знайдено tools\ngrok.exe
+    echo [ERROR] tools\ngrok.exe not found.
 
 
 
@@ -1401,7 +1401,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-    echo Додай офіційний ngrok.exe у папку tools або встанови ngrok у PATH.
+    echo Put the official ngrok.exe into the tools folder or install ngrok into PATH.
 
 
 
@@ -1433,7 +1433,7 @@ if not exist "%NGROK_EXE%" (
 
 
 
-echo [INFO] Використовую ngrok: "%NGROK_EXE%"
+echo [INFO] Using ngrok: "%NGROK_EXE%"
 
 
 
@@ -1449,7 +1449,7 @@ echo [INFO] Використовую ngrok: "%NGROK_EXE%"
 
 
 
-echo [5/10] Налаштування ngrok...
+echo [5/10] Configuring ngrok...
 
 
 
@@ -1473,7 +1473,7 @@ if errorlevel 1 (
 
 
 
-    echo [ERROR] Не вдалося додати ngrok authtoken.
+    echo [ERROR] Failed to add ngrok authtoken.
 
 
 
@@ -1513,7 +1513,7 @@ if errorlevel 1 (
 
 
 
-echo [6/10] Створення .env...
+echo [6/10] Creating .env...
 
 
 
@@ -1665,7 +1665,7 @@ echo [6/10] Створення .env...
 
 
 
-echo [7/10] Тестовий запуск Docker Desktop...
+echo [7/10] Test-starting Docker Desktop...
 
 
 
@@ -1697,7 +1697,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="0" (
 
 
 
-    echo [INFO] Запускаю Docker Desktop...
+    echo [INFO] Starting Docker Desktop...
 
 
 
@@ -1721,7 +1721,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="0" (
 
 
 
-        echo [WARN] Не бачу процесу Docker Desktop.exe. Якщо Docker не підніметься - відкрий Docker Desktop вручну.
+        echo [WARN] Docker Desktop.exe process not seen. If Docker does not start - open Docker Desktop manually.
 
 
 
@@ -1729,7 +1729,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="0" (
 
 
 
-        echo [INFO] Процес Docker Desktop.exe запущено.
+        echo [INFO] Docker Desktop.exe process started.
 
 
 
@@ -1749,7 +1749,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="0" (
 
 
 
-        echo [INFO] Backend Docker ще стартує.
+        echo [INFO] Docker backend is still starting.
 
 
 
@@ -1757,7 +1757,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="0" (
 
 
 
-        echo [INFO] Backend Docker процес виявлено.
+        echo [INFO] Docker backend process detected.
 
 
 
@@ -1777,7 +1777,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="1" (
 
 
 
-    echo [INFO] Docker Desktop уже запущений.
+    echo [INFO] Docker Desktop is already running.
 
 
 
@@ -1797,7 +1797,7 @@ if "%DOCKER_DESKTOP_RUNNING%"=="1" (
 
 
 
-echo [8/10] Очікую запуск Docker (до 5 хвилин)...
+echo [8/10] Waiting for Docker to start (up to 5 minutes)...
 
 
 
@@ -1841,7 +1841,7 @@ if errorlevel 1 (
 
 
 
-    if !WAIT_RETRIES! EQU 1 echo [INFO] Очікую Docker daemon...
+    if !WAIT_RETRIES! EQU 1 echo [INFO] Waiting for Docker daemon...
 
 
 
@@ -1849,7 +1849,7 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Docker daemon ще недоступний. Повторно запускаю Docker Desktop...
+        echo [INFO] Docker daemon still unavailable. Restarting Docker Desktop...
 
 
 
@@ -1865,7 +1865,7 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Повторна спроба запуску Docker Desktop...
+        echo [INFO] Retrying Docker Desktop launch...
 
 
 
@@ -1877,19 +1877,19 @@ if errorlevel 1 (
 
 
 
-    if !WAIT_RETRIES! EQU 20 echo [INFO] Docker ще стартує... приблизно 1 хвилина.
+    if !WAIT_RETRIES! EQU 20 echo [INFO] Docker is still starting... about 1 minute.
 
 
 
-    if !WAIT_RETRIES! EQU 40 echo [INFO] Docker ще стартує... приблизно 2 хвилини.
+    if !WAIT_RETRIES! EQU 40 echo [INFO] Docker is still starting... about 2 minutes.
 
 
 
-    if !WAIT_RETRIES! EQU 60 echo [INFO] Docker ще стартує... приблизно 3 хвилини.
+    if !WAIT_RETRIES! EQU 60 echo [INFO] Docker is still starting... about 3 minutes.
 
 
 
-    if !WAIT_RETRIES! EQU 80 echo [INFO] Docker ще стартує... приблизно 4 хвилини.
+    if !WAIT_RETRIES! EQU 80 echo [INFO] Docker is still starting... about 4 minutes.
 
 
 
@@ -1905,7 +1905,7 @@ if errorlevel 1 (
 
 
 
-        echo [ERROR] Docker не запустився за 5 хвилин.
+        echo [ERROR] Docker did not start within 5 minutes.
 
 
 
@@ -1913,7 +1913,7 @@ if errorlevel 1 (
 
 
 
-        echo Відкрий Docker Desktop вручну, дочекайся статусу Running і повтори install.bat.
+        echo Open Docker Desktop manually, wait for Running status and re-run install.bat.
 
 
 
@@ -1973,7 +1973,7 @@ if errorlevel 1 (
 
 
 
-echo [OK] Docker daemon доступний.
+echo [OK] Docker daemon available.
 
 
 
@@ -1989,7 +1989,7 @@ echo [OK] Docker daemon доступний.
 
 
 
-echo [9/10] Підготовка Docker image n8n...
+echo [9/10] Preparing n8n Docker image...
 
 
 
@@ -2005,11 +2005,11 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Знайдено локальний образ: "%N8N_IMAGE_TAR%"
+        echo [INFO] Local image found: "%N8N_IMAGE_TAR%"
 
 
 
-        echo [INFO] Завантажую через docker load...
+        echo [INFO] Loading via docker load...
 
 
 
@@ -2021,7 +2021,7 @@ if errorlevel 1 (
 
 
 
-            echo [ERROR] Не вдалося завантажити локальний tar образ.
+            echo [ERROR] Failed to load the local tar image.
 
 
 
@@ -2041,11 +2041,11 @@ if errorlevel 1 (
 
 
 
-        echo [INFO] Локальний tar образ не знайдено.
+        echo [INFO] Local tar image not found.
 
 
 
-        echo [INFO] Завантажую "%N8N_IMAGE%" з Docker Hub...
+        echo [INFO] Pulling "%N8N_IMAGE%" from Docker Hub...
 
 
 
@@ -2057,7 +2057,7 @@ if errorlevel 1 (
 
 
 
-            echo [ERROR] Не вдалося завантажити n8n image з Docker Hub.
+            echo [ERROR] Failed to pull n8n image from Docker Hub.
 
 
 
@@ -2081,7 +2081,7 @@ if errorlevel 1 (
 
 
 
-    echo [INFO] Образ "%N8N_IMAGE%" вже є локально.
+    echo [INFO] Image "%N8N_IMAGE%" already present locally.
 
 
 
@@ -2093,7 +2093,7 @@ if errorlevel 1 (
 
 
 
-echo [10/10] Запуск n8n...
+echo [10/10] Starting n8n...
 
 
 
@@ -2113,7 +2113,7 @@ if errorlevel 1 (
 
 
 
-    echo [FAIL] start.bat завершився з помилкою. Перевір повідомлення вище.
+    echo [FAIL] start.bat exited with an error. Check the messages above.
 
 
 
@@ -2149,7 +2149,7 @@ echo.
 
 
 
-echo [PASS] Встановлення і запуск завершено успішно.
+echo [PASS] Install and start finished successfully.
 
 
 
@@ -2179,7 +2179,7 @@ exit /b 0
 
 if "%AUTO_REUSE%"=="1" (
 
-  echo [INFO] --auto-reuse: без натискання клавіші ^(GUI^).
+  echo [INFO] --auto-reuse: no keypress required ^(GUI^).
 
   timeout /t 1 /nobreak >nul
 
@@ -2189,7 +2189,7 @@ if "%AUTO_REUSE%"=="1" (
 
 if "%SKIP_PAUSE%"=="1" (
 
-  echo [INFO] GUI runner: без натискання клавіші.
+  echo [INFO] GUI runner: no keypress required.
 
   timeout /t 1 /nobreak >nul
 
@@ -2304,46 +2304,46 @@ REM Also treat Docker as "installed" if Program Files has it (PATH may not yet b
 if not defined DOCKER_FOUND if exist "%ProgramFiles%\Docker\Docker\Docker Desktop.exe" set "DOCKER_FOUND=program-files"
 
 if not defined DOCKER_FOUND (
-    echo [INFO] Docker Desktop не знайдено.
+    echo [INFO] Docker Desktop not found.
     REM --- try winget first: official Microsoft channel, bypasses CDN/proxy issues ---
     where winget >nul 2>&1
     if not errorlevel 1 (
-        echo [INFO] Встановлюю Docker Desktop через winget ^(офіційний Microsoft канал^)...
-        echo [INFO] Це ~600 MB, займе кілька хвилин. Прогрес зʼявлятиметься нижче.
+        echo [INFO] Installing Docker Desktop via winget ^(official Microsoft channel^)...
+        echo [INFO] About 600 MB, will take a few minutes. Progress appears below.
         winget install --id Docker.DockerDesktop -e --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
         if not errorlevel 1 (
-            echo [OK] Docker Desktop встановлено через winget.
+            echo [OK] Docker Desktop installed via winget.
             echo.
-            echo [ACTION REQUIRED] Docker Desktop встановлено.
-            echo Якщо Windows попросить перезавантаження - перезавантаж і знову запусти Install.
-            echo [NEXT] Після перезапуску Install [Admin] - підуть ngrok, .env і n8n.
+            echo [ACTION REQUIRED] Docker Desktop installed.
+            echo If Windows asks for a reboot - reboot and run Install again.
+            echo [NEXT] After restarting Install [Admin] - ngrok, .env and n8n will follow.
             exit /b 2
         )
-        echo [WARN] winget не зміг встановити Docker. Пробую прямий download...
+        echo [WARN] winget could not install Docker. Trying direct download...
     )
     REM --- fallback: manual download of Docker Desktop Installer ---
     set "DL_DOCKER=Y"
     if not "%AUTO_REUSE%"=="1" if not "%SKIP_PAUSE%"=="1" (
-        set /p DL_DOCKER=Скачати Docker Desktop Installer з docker.com ^(~600 MB^)? Y/N [Y]: 
+        set /p DL_DOCKER=Download Docker Desktop Installer from docker.com ^(~600 MB^)? Y/N [Y]: 
         if "!DL_DOCKER!"=="" set "DL_DOCKER=Y"
     )
     if /I "!DL_DOCKER!"=="Y" (
         set "DOCKER_URL=https://desktop.docker.com/win/main/amd64/Docker%%20Desktop%%20Installer.exe"
         set "DOCKER_OUT=%TOOLS_DIR%\Docker Desktop Installer.exe"
-        echo [INFO] Завантажую Docker Desktop Installer...
+        echo [INFO] Downloading Docker Desktop Installer...
         echo [INFO] URL: !DOCKER_URL!
         call :download_file "!DOCKER_URL!" "!DOCKER_OUT!"
         if errorlevel 1 (
-            echo [ERROR] Не вдалося завантажити Docker installer.
-            echo         Перевір інтернет-зʼєднання або завантаж вручну:
+            echo [ERROR] Failed to download the Docker installer.
+            echo         Check your internet connection or download manually:
             echo         https://www.docker.com/products/docker-desktop/
-            echo         і поклади файл у: %TOOLS_DIR%
+            echo         and put the file into: %TOOLS_DIR%
             exit /b 1
         )
         set "DOCKER_INSTALLER=!DOCKER_OUT!"
-        echo [OK] Docker installer готовий.
+        echo [OK] Docker installer ready.
     ) else (
-        echo [ERROR] Потрібен Docker Desktop Installer.exe у %TOOLS_DIR%\
+        echo [ERROR] Docker Desktop Installer.exe is required in %TOOLS_DIR%\
         exit /b 1
     )
 )
@@ -2360,34 +2360,34 @@ if not defined NGROK_FOUND (
 :ngrok_found_in_path
 
 if not defined NGROK_FOUND (
-    echo [INFO] ngrok.exe не знайдено ані в tools\, ані в PATH.
+    echo [INFO] ngrok.exe not found in tools\ or PATH.
     set "DL_NGROK=Y"
     if not "%AUTO_REUSE%"=="1" if not "%SKIP_PAUSE%"=="1" (
-        set /p DL_NGROK=Скачати ngrok v3 ^(~15 MB^)? Y/N [Y]: 
+        set /p DL_NGROK=Download ngrok v3 ^(~15 MB^)? Y/N [Y]: 
         if "!DL_NGROK!"=="" set "DL_NGROK=Y"
     )
     if /I not "!DL_NGROK!"=="Y" (
-        echo [ERROR] Потрібен ngrok.exe у %TOOLS_DIR%\ або в PATH.
-        echo         Завантаж вручну: https://ngrok.com/download
+        echo [ERROR] ngrok.exe required in %TOOLS_DIR%\ or in PATH.
+        echo         Download manually: https://ngrok.com/download
         exit /b 1
     )
     set "NGROK_URL=https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip"
     set "NGROK_ZIP=%TOOLS_DIR%\ngrok.zip"
-    echo [INFO] Завантажую ngrok...
+    echo [INFO] Downloading ngrok...
     call :download_file "!NGROK_URL!" "!NGROK_ZIP!"
     if errorlevel 1 (
-        echo [ERROR] Не вдалося завантажити ngrok.
+        echo [ERROR] Failed to download ngrok.
         exit /b 1
     )
-    echo [INFO] Розпаковую ngrok...
+    echo [INFO] Unpacking ngrok...
     powershell -NoProfile -Command "Expand-Archive -Force -LiteralPath '!NGROK_ZIP!' -DestinationPath '%TOOLS_DIR%'"
     del /f /q "!NGROK_ZIP!" >nul 2>&1
     if not exist "%TOOLS_DIR%\ngrok.exe" (
-        echo [ERROR] Після розпакування ngrok.exe не знайдено.
+        echo [ERROR] ngrok.exe not found after unpacking.
         exit /b 1
     )
     set "NGROK_EXE=%TOOLS_DIR%\ngrok.exe"
-    echo [OK] ngrok готовий.
+    echo [OK] ngrok ready.
 )
 exit /b 0
 

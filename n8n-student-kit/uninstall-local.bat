@@ -66,7 +66,7 @@ if exist "%STATE_DIR%\.env" del /q "%STATE_DIR%\.env"
 
 
 
-echo Локальні конфіги очищено.
+echo Local configs cleaned.
 
 
 
@@ -82,7 +82,7 @@ exit /b 0
 
 :gui_pause
 if "%SKIP_PAUSE%"=="1" (
-  echo [INFO] GUI: без натискання клавіші.
+  echo [INFO] GUI: no keypress required.
   timeout /t 1 /nobreak >nul
   goto :gui_pause_end
 )
