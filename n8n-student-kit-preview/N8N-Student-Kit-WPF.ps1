@@ -281,19 +281,44 @@ function Set-LiveState($txt, $color) {
     $liveDot.Fill = $color
 }
 
-# --- status checks (identical logic)
-function Refresh-Checks {
-    $dockerA = Join-Path $toolsDir "DockerDesktopInstaller.exe"
-    $dockerB = Join-Path $toolsDir "Docker Desktop Installer.exe"
-    $ngrok   = Join-Path $toolsDir "ngrok.exe"
-    $img     = Join-Path $toolsDir "images\n8n-2.15.0.tar"
-    $dockerOk = (Test-Path $dockerA) -or (Test-Path $dockerB)
-    $ngrokOk  = Test-Path $ngrok
-    $imgOk    = Test-Path $img
-    Set-Pill $pillDockerDot $pillDockerText $dockerOk ($(if ($dockerOk) { "installer ready" } else { "missing" }))
-    Set-Pill $pillNgrokDot  $pillNgrokText  $ngrokOk  ($(if ($ngrokOk)  { "binary ready" }     else { "missing" }))
-    Set-Pill $pillImageDot  $pillImageText  $imgOk    ($(if ($imgOk)    { "image 2.15.0 ready" } else { "missing" }))
+# --- runtime status checks (live state, not artifact presence)
+function Test-DockerDaemon {
+    # Fast: presence of the named pipe implies docker daemon is accepting connections
+    try { return ([System.IO.Directory]::GetFiles('\\.\pipe\', 'docker_engine')).Length -gt 0 }
+    catch { return $false }
 }
+
+function Test-NgrokRunning {
+    return $null -ne (Get-Process -Name 'ngrok' -ErrorAction SilentlyContinue)
+}
+
+function Test-TcpPort($hostname, $port, $timeoutMs = 250) {
+    $cli = $null
+    try {
+        $cli = New-Object System.Net.Sockets.TcpClient
+        $async = $cli.BeginConnect($hostname, $port, $null, $null)
+        $ok = $async.AsyncWaitHandle.WaitOne($timeoutMs, $false)
+        if ($ok -and $cli.Connected) { $cli.EndConnect($async); return $true }
+        return $false
+    } catch { return $false }
+    finally { if ($cli) { $cli.Close() } }
+}
+
+function Refresh-Checks {
+    $dockerOk = Test-DockerDaemon
+    $ngrokOk  = Test-NgrokRunning
+    $n8nOk    = Test-TcpPort '127.0.0.1' 5678
+
+    Set-Pill $pillDockerDot $pillDockerText $dockerOk ($(if ($dockerOk) { "daemon running" } else { "not running" }))
+    Set-Pill $pillNgrokDot  $pillNgrokText  $ngrokOk  ($(if ($ngrokOk)  { "tunnel active" }  else { "offline" }))
+    Set-Pill $pillImageDot  $pillImageText  $n8nOk    ($(if ($n8nOk)    { "listening :5678" } else { "not running" }))
+}
+
+# periodic auto-refresh so pills track live state without manual clicks
+$script:statusTimer = New-Object System.Windows.Threading.DispatcherTimer
+$script:statusTimer.Interval = [TimeSpan]::FromSeconds(2)
+$script:statusTimer.Add_Tick({ try { Refresh-Checks } catch {} })
+$script:statusTimer.Start()
 
 # --- process launching (identical pattern, adapted to WPF)
 $script:tailPath           = $null

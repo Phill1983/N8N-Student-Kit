@@ -505,7 +505,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Ellipse x:Name="pillImageDot" Width="8" Height="8" Fill="{StaticResource TextSecBrush}" VerticalAlignment="Center"/>
                             <StackPanel Margin="8,0,0,0">
-                                <TextBlock Text="N8N image" FontWeight="SemiBold" Foreground="{StaticResource TextPriBrush}" FontSize="11"/>
+                                <TextBlock Text="n8n" FontWeight="SemiBold" Foreground="{StaticResource TextPriBrush}" FontSize="11"/>
                                 <TextBlock x:Name="pillImageText" Text="checking..." Style="{StaticResource Muted}"/>
                             </StackPanel>
                         </StackPanel>
