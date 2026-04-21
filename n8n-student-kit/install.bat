@@ -2174,7 +2174,7 @@ exit /b 0
 
 if "%AUTO_REUSE%"=="1" (
 
-  echo [INFO] --auto-reuse: без натискання клавіші (GUI).
+  echo [INFO] --auto-reuse: без натискання клавіші ^(GUI^).
 
   timeout /t 1 /nobreak >nul
 
@@ -2374,13 +2374,14 @@ REM =========================================================================
 :download_file
 set "DL_URL=%~1"
 set "DL_OUT=%~2"
+set "DL_UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 where curl.exe >nul 2>&1
 if not errorlevel 1 (
-    curl.exe -L --fail --retry 3 --connect-timeout 20 --progress-bar -o "%DL_OUT%" "%DL_URL%"
+    curl.exe -L --fail --retry 3 --connect-timeout 20 --progress-bar -A "%DL_UA%" -o "%DL_OUT%" "%DL_URL%"
     if not errorlevel 1 exit /b 0
     echo [WARN] curl failed, trying PowerShell...
 )
-powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri $env:DL_URL -OutFile $env:DL_OUT -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri $env:DL_URL -OutFile $env:DL_OUT -UserAgent $env:DL_UA -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
 exit /b %ERRORLEVEL%
 
 
