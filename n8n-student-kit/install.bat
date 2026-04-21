@@ -910,7 +910,12 @@ if "%N8N_BASIC_AUTH_PASSWORD%"=="" (
 
 echo [1b/10] Перевірка локальних тулів (Docker installer, ngrok)...
 call :ensure_tools
-if errorlevel 1 (
+set "ET_RC=%ERRORLEVEL%"
+if "%ET_RC%"=="2" (
+    call :maybe_pause
+    exit /b 0
+)
+if "%ET_RC%"=="1" (
     call :maybe_pause
     exit /b 1
 )
@@ -2288,18 +2293,38 @@ REM =========================================================================
 :ensure_tools
 if not exist "%TOOLS_DIR%" mkdir "%TOOLS_DIR%"
 
-REM --- Docker Desktop Installer --------------------------------------------
+REM --- Docker Desktop ------------------------------------------------------
 set "DOCKER_FOUND="
 if exist "%TOOLS_DIR%\DockerDesktopInstaller.exe"    set "DOCKER_FOUND=%TOOLS_DIR%\DockerDesktopInstaller.exe"
 if exist "%TOOLS_DIR%\Docker Desktop Installer.exe"  set "DOCKER_FOUND=%TOOLS_DIR%\Docker Desktop Installer.exe"
 docker --version >nul 2>&1
 if not errorlevel 1 set "DOCKER_FOUND=already-installed"
 
+REM Also treat Docker as "installed" if Program Files has it (PATH may not yet be updated)
+if not defined DOCKER_FOUND if exist "%ProgramFiles%\Docker\Docker\Docker Desktop.exe" set "DOCKER_FOUND=program-files"
+
 if not defined DOCKER_FOUND (
-    echo [INFO] Docker Desktop Installer не знайдено в tools\.
+    echo [INFO] Docker Desktop не знайдено.
+    REM --- try winget first: official Microsoft channel, bypasses CDN/proxy issues ---
+    where winget >nul 2>&1
+    if not errorlevel 1 (
+        echo [INFO] Встановлюю Docker Desktop через winget ^(офіційний Microsoft канал^)...
+        echo [INFO] Це ~600 MB, займе кілька хвилин. Прогрес зʼявлятиметься нижче.
+        winget install --id Docker.DockerDesktop -e --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+        if not errorlevel 1 (
+            echo [OK] Docker Desktop встановлено через winget.
+            echo.
+            echo [ACTION REQUIRED] Docker Desktop встановлено.
+            echo Якщо Windows попросить перезавантаження - перезавантаж і знову запусти Install.
+            echo [NEXT] Після перезапуску Install [Admin] - підуть ngrok, .env і n8n.
+            exit /b 2
+        )
+        echo [WARN] winget не зміг встановити Docker. Пробую прямий download...
+    )
+    REM --- fallback: manual download of Docker Desktop Installer ---
     set "DL_DOCKER=Y"
     if not "%AUTO_REUSE%"=="1" if not "%SKIP_PAUSE%"=="1" (
-        set /p DL_DOCKER=Скачати його з docker.com ^(~600 MB^)? Y/N [Y]: 
+        set /p DL_DOCKER=Скачати Docker Desktop Installer з docker.com ^(~600 MB^)? Y/N [Y]: 
         if "!DL_DOCKER!"=="" set "DL_DOCKER=Y"
     )
     if /I "!DL_DOCKER!"=="Y" (
@@ -2377,11 +2402,11 @@ set "DL_OUT=%~2"
 set "DL_UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 where curl.exe >nul 2>&1
 if not errorlevel 1 (
-    curl.exe -L --fail --retry 3 --connect-timeout 20 --progress-bar -A "%DL_UA%" -o "%DL_OUT%" "%DL_URL%"
+    curl.exe -L --fail --retry 3 --connect-timeout 20 --noproxy "*" --progress-bar -A "%DL_UA%" -o "%DL_OUT%" "%DL_URL%"
     if not errorlevel 1 exit /b 0
-    echo [WARN] curl failed, trying PowerShell...
+    echo [WARN] curl failed, trying PowerShell Invoke-WebRequest...
 )
-powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -Uri $env:DL_URL -OutFile $env:DL_OUT -UserAgent $env:DL_UA -UseBasicParsing -ErrorAction Stop } catch { Write-Host $_.Exception.Message; exit 1 }"
+powershell -NoProfile -Command "$ProgressPreference='SilentlyContinue'; [System.Net.WebRequest]::DefaultWebProxy = $null; try { Invoke-WebRequest -Uri $env:DL_URL -OutFile $env:DL_OUT -UserAgent $env:DL_UA -UseBasicParsing -ErrorAction Stop; exit 0 } catch { Write-Host $_.Exception.Message }; try { Start-BitsTransfer -Source $env:DL_URL -Destination $env:DL_OUT -ErrorAction Stop; exit 0 } catch { Write-Host ('BITS: ' + $_.Exception.Message); exit 1 }"
 exit /b %ERRORLEVEL%
 
 
