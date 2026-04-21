@@ -1,0 +1,32 @@
+---
+description: Conventions for install.bat and its siblings
+globs: n8n-student-kit/*.bat, n8n-student-kit/*.cmd
+alwaysApply: false
+---
+
+# Batch scripts
+
+## install.bat structure
+
+1. `setlocal EnableExtensions EnableDelayedExpansion` — required for `!VAR!`.
+2. `chcp 65001` for Unicode Ukrainian strings.
+3. Elevation check via `fltmc`. Self-relaunches with UAC if not admin.
+4. Flags: `--elevated` (internal, post-UAC), `--auto-reuse` (suppress prompts).
+5. Step labels `[1/10] ... [10/10]` for user feedback.
+6. Auto-download of Docker installer and ngrok happens in `:ensure_tools` (called after config load).
+
+## Adding new downloads
+
+Use the `:download_file "URL" "OutputPath"` helper. It tries `curl.exe` first, falls back to PowerShell `Invoke-WebRequest -UseBasicParsing`. Both exist on Win 10 1803+.
+
+## Interactive vs GUI mode
+
+When `AUTO_REUSE=1` or `SKIP_PAUSE=1`, the script must not ask `Y/N` prompts — default to Yes and continue. The GUI sets these when calling `gui-run.cmd`.
+
+## `:maybe_pause`
+
+All exit paths should end with `call :maybe_pause` so headless runs (GUI) don't hang waiting for a keypress, but interactive runs still pause so the user sees the final state.
+
+## Sensitive values
+
+`NGROK_AUTHTOKEN` and `N8N_BASIC_AUTH_PASSWORD` end up in `state\install.cfg` and `state\.env` in plain text. These paths are gitignored — never remove them from `.gitignore`.

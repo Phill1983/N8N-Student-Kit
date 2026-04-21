@@ -1,0 +1,55 @@
+---
+description: Rules for editing the WPF GUI (XAML + PowerShell)
+globs: n8n-student-kit-preview/**/*
+alwaysApply: false
+---
+
+# WPF GUI coding rules
+
+## Named controls
+
+Every control that PowerShell needs to touch must have `x:Name="..."` in XAML.
+Retrieve via `function Find($name) { $window.FindName($name) }`.
+
+## Updating UI from background code
+
+Use `$control.Dispatcher.Invoke({ ... })` if you're on a non-UI thread. Timers
+(`DispatcherTimer`) run on the UI thread by default — safe to update controls directly.
+
+## Styling
+
+- Dark theme colors defined in `<Window.Resources>` as `Color` + `SolidColorBrush` pairs.
+- Never hardcode colors in controls — use `{StaticResource AccentBrush}` etc.
+- Card style: `Style="{StaticResource Card}"` — don't duplicate the rounded-rect + shadow pattern.
+- Buttons: `PrimaryBtn` (accent fill) or `GhostBtn` (surface + border). `IconBtn` for chevron/toggles.
+
+## Scrolling
+
+- Main `ScrollViewer` has `x:Name="mainScroll"` and `CanContentScroll="False"` so pixel-based scrolling works with our smooth-scroll easing (22% per 14ms tick).
+- Don't set fixed heights on body content — let the scroll handle overflow.
+
+## Icon drawing
+
+The app icon is generated via `New-AppIcon` using `DrawingVisual` + `RenderTargetBitmap`:
+- background: rounded rect with 3-stop linear gradient (header colors)
+- glow: radial gradient ellipse
+- lightning bolt: `Geometry.Parse("M 74,18 ... Z")` in 128-space, scaled via `PushTransform`
+- "8": `FormattedText` in Segoe UI Black, drawn AFTER the bolt so it sits on top
+
+Coordinates are in 128-unit space; everything scales by `$size / 128`.
+
+## Stepper state machine
+
+`Set-Step $dot $icon $sub $num $state $subText` where `$state ∈ { pending, active, done }`.
+
+- `pending`: muted bg, shows the digit
+- `active`: accent bg + glow effect, shows the digit (never stale)
+- `done`: green bg, shows `[char]0x2713` (✓) — Unicode, not Segoe MDL2 glyph
+
+Always pass `$num` so text doesn't get stuck on a previous glyph.
+
+## Avoid
+
+- `Get-Content -Raw` for XAML → use `[IO.File]::ReadAllText(..., [Text.Encoding]::UTF8)`.
+- `$geom.Transform = ...` on a parsed Geometry (it's frozen) → use `DrawingContext.PushTransform`.
+- Mixing FontFamily with glyph codepoint — Segoe MDL2 glyphs won't render in Segoe UI.

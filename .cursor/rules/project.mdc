@@ -1,0 +1,88 @@
+---
+description: N8N Student Kit - project context, structure, conventions
+alwaysApply: true
+---
+
+# N8N Student Kit — Project Context
+
+Self-hosted n8n automation stack wrapped in a Windows GUI. Live on GitHub:
+https://github.com/Phill1983/N8N-Student-Kit (branch `main`).
+
+## Repo layout
+
+```
+N8N-Workstation/
+├── .cursor/rules/             # these context rules
+├── .gitignore
+├── README.md                  # English README (primary)
+├── README.uk.md               # Ukrainian README
+│
+├── n8n-student-kit/           # backend + legacy WinForms GUI
+│   ├── install.bat            # admin-level installer w/ auto-download of tools
+│   ├── start.bat / stop.bat
+│   ├── gui-run.cmd            # headless wrapper the GUIs call
+│   ├── N8N-Student-Kit-GUI.ps1  # WinForms GUI (classic alternative, KEEP)
+│   ├── start-gui.bat / .vbs   # launchers for WinForms GUI
+│   ├── compose/docker-compose.yml
+│   ├── templates/             # env + ngrok templates
+│   ├── tools/                 # GITIGNORED: Docker installer, ngrok.exe, images/*.tar
+│   └── state/                 # GITIGNORED: .env, install.cfg, *.log
+│
+└── n8n-student-kit-preview/   # primary WPF GUI (Fluent dark theme)
+    ├── MainWindow.xaml
+    ├── N8N-Student-Kit-WPF.ps1
+    ├── start-wpf.bat / .vbs
+    └── README.md              # WPF-specific design notes
+```
+
+## Two GUIs, one backend
+
+Both GUIs share `state/install.cfg`, `state/.env`, and call the same `.bat` files.
+Users can switch between WinForms and WPF freely without losing config.
+
+| GUI | Stack | Status |
+|---|---|---|
+| `N8N-Student-Kit-GUI.ps1` | WinForms + GDI+ | legacy, still works, kept as lightweight alternative |
+| `N8N-Student-Kit-WPF.ps1` | WPF + XAML, PowerShell 5.1 | **primary**, dark Fluent theme |
+
+## Key technical decisions
+
+- **Windows-only** (PowerShell + WPF). macOS/Linux port = future (Avalonia UI candidate).
+- **PowerShell 5.1** baseline (built-in on Win 10/11). Don't use PS 7-only features.
+- **XAML loaded via `XamlReader.Load`** from a string read with UTF-8 (never `Get-Content -Raw` without `-Encoding UTF8` — it breaks unicode on 5.1).
+- **Icon, logo, progress bar, scrollbar, lightning bolt** — all drawn programmatically via `DrawingVisual` / XAML geometry. NO external image assets.
+- **AppUserModelID** set via P/Invoke `shell32!SetCurrentProcessExplicitAppUserModelID` to prevent taskbar grouping with other `powershell.exe` windows.
+- **DPI awareness** via P/Invoke `shcore!SetProcessDpiAwareness(2)` with `user32!SetProcessDPIAware` fallback.
+- **`install.bat` auto-downloads** Docker Desktop Installer and ngrok from official sources if missing in `tools/`. Offline install: drop files manually, auto-detected. curl first, PowerShell `Invoke-WebRequest` fallback.
+- **Silent launch** via `.vbs` files (hides PS console window entirely).
+- **AUTO_REUSE flag** in `install.bat` suppresses interactive prompts when invoked from the GUI.
+
+## Guardrails
+
+- **NEVER commit** `state/*.env`, `state/install.cfg`, or `tools/*.exe`/`*.tar` — they contain secrets or are giant binaries. `.gitignore` enforces this.
+- **NEVER use `Get-Content -Raw`** on XAML without explicit UTF-8 encoding; use `[IO.File]::ReadAllText($path, [Text.Encoding]::UTF8)`.
+- **Geometry from `Geometry.Parse(...)`** is frozen — apply transforms via `DrawingContext.PushTransform`, not `geom.Transform = ...`.
+- **FormattedText constructors**: use the 7-arg version `(text, culture, flowDir, typeface, emSize, brush, pixelsPerDip=96)` for WPF 4.6+ safety.
+- **Unicode glyphs in XAML**: digits work in `Segoe UI Variable`, but icons (`0xE700+`) need `FontFamily="Segoe MDL2 Assets"`. Don't mix; if unsure, use plain Unicode (`✓` U+2713) that any font renders.
+- **In `Set-Step`** always reset `$icon.Text` explicitly — otherwise state transitions leave stale glyphs.
+
+## Running the app locally
+
+```cmd
+n8n-student-kit-preview\start-wpf.vbs
+```
+
+Flow in GUI: Save → Install (Admin) (twice: Docker then rest) → Start.
+
+## Git workflow
+
+- Default branch: `main`. Remote: `origin` = `https://github.com/Phill1983/N8N-Student-Kit.git`.
+- Conventional commits style: `feat(scope): ...`, `fix(scope): ...`, `docs: ...`.
+- Credentials: Git Credential Manager (OAuth). Already authenticated locally.
+
+## Roadmap (from README)
+
+- [ ] macOS version (Avalonia UI or Tauri)
+- [ ] Linux build
+- [ ] Auto-update ngrok binary
+- [ ] Workflow backup/restore

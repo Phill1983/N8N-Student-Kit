@@ -94,7 +94,12 @@ function New-AppIcon {
     $edgePen = New-Object System.Windows.Media.Pen(([System.Windows.Media.Brushes]::White), ([double]($size * 0.02)))
     $edgePen.LineJoin = [System.Windows.Media.PenLineJoin]::Round
 
-    # Big "8" behind the bolt (so the bolt reads as "N" and together they form N8)
+    # bolt goes first (behind), the "8" will be drawn on top
+    $dc.PushTransform((New-Object System.Windows.Media.ScaleTransform($k, $k)))
+    $dc.DrawGeometry($boltBrush, $edgePen, $geom)
+    $dc.Pop()
+
+    # "8" on top of the bolt, shifted slightly down and right
     try {
         $tf = New-Object System.Windows.Media.Typeface(
             (New-Object System.Windows.Media.FontFamily('Segoe UI')),
@@ -114,15 +119,11 @@ function New-AppIcon {
             $eightBrush,
             96.0
         )
-        # Centered so bolt passes through both loops of the 8
-        $tx = ($size - $ft.Width) / 2.0
-        $ty = ($size - $ft.Height) / 2.0 - ($size * 0.03)
+        # Offset slightly down-right of center
+        $tx = (($size - $ft.Width) / 2.0) + ($size * 0.11)
+        $ty = (($size - $ft.Height) / 2.0) + ($size * 0.05)
         $dc.DrawText($ft, (New-Object System.Windows.Point($tx, $ty)))
     } catch {}
-
-    $dc.PushTransform((New-Object System.Windows.Media.ScaleTransform($k, $k)))
-    $dc.DrawGeometry($boltBrush, $edgePen, $geom)
-    $dc.Pop()
 
     $dc.Close()
 
